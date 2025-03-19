@@ -1,0 +1,39 @@
+# Bỏ qua các thư mục và tệp liên quan đến hệ thống và trình soạn thảo
+.vscode/
+.DS_Store
+
+# Bỏ qua các thư mục và tệp liên quan đến môi trường Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Bỏ qua các thư mục và tệp liên quan đến Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Bỏ qua các tệp tạm thời và nhật ký
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Bỏ qua các tệp liên quan đến IDE khác (có thể cần điều chỉnh theo IDE bạn sử dụng)
+.idea/
+*.iml
+
+# Bỏ qua các tệp liên quan đến hệ thống xây dựng và phân phối
+dist/
+build/
+.cache/
+
+# Bỏ qua các tệp đầu ra khác
+*.out
+*.class
+*.exe
+*.dll
+*.so
+*.dylib
