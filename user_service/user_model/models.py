@@ -32,9 +32,11 @@ class Address(models.Model):
 
 class User(models.Model):
     id = models.AutoField(primary_key=True)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, unique=True)
+    # account = models.ForeignKey(Account, on_delete=models.CASCADE, unique=True)
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
     fullname = models.ForeignKey(Fullname, on_delete=models.CASCADE, null=True, blank=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True, blank=True)
+    email = models.EmailField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=100, null=True, blank=True)
     phone = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

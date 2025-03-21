@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -70,17 +70,26 @@ WSGI_APPLICATION = 'user_service.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'user_service',  # Tên database bạn đã tạo
+#         'USER': 'root',      # Tên user MySQL
+#         'PASSWORD': 'NguyenDuc@163',  # Mật khẩu MySQL
+#         'HOST': 'localhost',   # Địa chỉ host MySQL (thường là localhost)
+#         'PORT': '3306',        # Cổng MySQL (mặc định là 3306)
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'user_service',  # Tên database bạn đã tạo
-        'USER': 'root',      # Tên user MySQL
-        'PASSWORD': 'NguyenDuc@163',  # Mật khẩu MySQL
-        'HOST': 'localhost',   # Địa chỉ host MySQL (thường là localhost)
-        'PORT': '3306',        # Cổng MySQL (mặc định là 3306)
+        'NAME': os.environ.get('DATABASE_NAME', 'user_service'),
+        'USER': os.environ.get('DATABASE_USER', 'root'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'NguyenDuc@163'),
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'PORT': os.environ.get('DATABASE_PORT', '3306'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

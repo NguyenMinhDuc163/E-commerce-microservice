@@ -2,6 +2,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb+srv://nguyenduc:bMfuLqGps59NJLI8@cluster0.ld2i8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+MONGO_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'book_app')
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -73,6 +77,26 @@ WSGI_APPLICATION = 'product_service.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'djongo',
+#         'ENFORCE_SCHEMA': False,
+#         'CLIENT': {
+#             'host': MONGODB_URI,
+#             'name': MONGO_DB_NAME,
+#             'authMechanism': 'SCRAM-SHA-1',
+#         }
+#     },
+#     'mongodb': {
+#         'ENGINE': 'djongo',
+#         'ENFORCE_SCHEMA': False,
+#         'CLIENT': {
+#             'host': MONGODB_URI,
+#             'name': MONGO_DB_NAME,
+#             'authMechanism': 'SCRAM-SHA-1',
+#         }
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
@@ -93,7 +117,6 @@ DATABASES = {
         }
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
