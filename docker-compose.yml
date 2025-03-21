@@ -1,0 +1,239 @@
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-container-new
+    environment:
+      MYSQL_ROOT_PASSWORD: NguyenDuc@163
+      MYSQL_DATABASE: cart_service
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pNguyenDuc@163"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container-new
+    environment:
+      POSTGRES_PASSWORD: NguyenDuc@163
+      POSTGRES_USER: postgres
+      POSTGRES_DB: mydb
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cart Service - MySQL
+  cart_service:
+    image: nguyenduc1603/cart_service:v1.0.0
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=mysql
+      - DATABASE_NAME=cart_service
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=NguyenDuc@163
+    ports:
+      - "8001:8000"
+    restart: on-failure
+
+  # Order Service - PostgreSQL
+  order_service:
+    image: nguyenduc1603/order_service:v1.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_NAME=mydb
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=NguyenDuc@163
+    ports:
+      - "8002:8000"
+
+  # Payment Service - PostgreSQL
+  payment_service:
+    image: nguyenduc1603/payment_service:v1.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_NAME=mydb
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=NguyenDuc@163
+    ports:
+      - "8003:8000"
+
+  # Product Service - MongoDB
+  product_service:
+    image: nguyenduc1603/product_service:v1.0.0
+    environment:
+      - MONGODB_URI=mongodb+srv://nguyenduc:bMfuLqGps59NJLI8@cluster0.ld2i8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - MONGODB_DB_NAME=book_app
+    ports:
+      - "8004:8000"
+
+  # Review Service - Volume only
+  review_service:
+    image: nguyenduc1603/review_service:v1.0.0
+    volumes:
+      - review_data:/app/data
+    ports:
+      - "8005:8000"
+
+  # Search Service - Volume only
+  search_service:
+    image: nguyenduc1603/search_service:v1.0.0
+    volumes:
+      - search_data:/app/data
+    ports:
+      - "8006:8000"
+
+  # Shipment Service - PostgreSQL
+  shipment_service:
+    image: nguyenduc1603/shipment_service:v1.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_NAME=mydb
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=NguyenDuc@163
+    ports:
+      - "8007:8000"
+
+  # User Service - MySQL
+  user_service:
+    image: nguyenduc1603/user_service:v1.0.0
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=mysql
+      - DATABASE_NAME=user_service
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=NguyenDuc@163
+    ports:
+      - "8008:8000"
+    restart: on-failure
+
+  # API Gateway
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - user_service
+      - product_service
+      - cart_service
+      - order_service
+      - payment_service
+      - shipment_service
+      - review_service
+      - search_service
+    restart: on-failure
+    command: |
+      /bin/bash -c "
+      echo 'server {
+          listen 80;
+          server_name localhost;
+
+          # User Service
+          location /api/users/ {
+              proxy_pass http://user_service:8000/;
+              proxy_set_header Host \$$host;
+              proxy_set_header X-Real-IP \$$remote_addr;
+              proxy_set_header X-Forwarded-For \$$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto \$$scheme;
+          }
+
+          # Product Service
+          location /api/products/ {
+              proxy_pass http://product_service:8000/;
+              proxy_set_header Host \$$host;
+              proxy_set_header X-Real-IP \$$remote_addr;
+              proxy_set_header X-Forwarded-For \$$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto \$$scheme;
+          }
+
+          # Cart Service
+          location /api/carts/ {
+              proxy_pass http://cart_service:8000/;
+              proxy_set_header Host \$$host;
+              proxy_set_header X-Real-IP \$$remote_addr;
+              proxy_set_header X-Forwarded-For \$$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto \$$scheme;
+          }
+
+          # Order Service
+          location /api/orders/ {
+              proxy_pass http://order_service:8000/;
+              proxy_set_header Host \$$host;
+              proxy_set_header X-Real-IP \$$remote_addr;
+              proxy_set_header X-Forwarded-For \$$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto \$$scheme;
+          }
+
+          # Payment Service
+          location /api/payments/ {
+              proxy_pass http://payment_service:8000/;
+              proxy_set_header Host \$$host;
+              proxy_set_header X-Real-IP \$$remote_addr;
+              proxy_set_header X-Forwarded-For \$$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto \$$scheme;
+          }
+
+          # Shipment Service
+          location /api/shipments/ {
+              proxy_pass http://shipment_service:8000/;
+              proxy_set_header Host \$$host;
+              proxy_set_header X-Real-IP \$$remote_addr;
+              proxy_set_header X-Forwarded-For \$$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto \$$scheme;
+          }
+
+          # Review Service
+          location /api/reviews/ {
+              proxy_pass http://review_service:8000/;
+              proxy_set_header Host \$$host;
+              proxy_set_header X-Real-IP \$$remote_addr;
+              proxy_set_header X-Forwarded-For \$$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto \$$scheme;
+          }
+
+          # Search Service
+          location /api/search/ {
+              proxy_pass http://search_service:8000/;
+              proxy_set_header Host \$$host;
+              proxy_set_header X-Real-IP \$$remote_addr;
+              proxy_set_header X-Forwarded-For \$$proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto \$$scheme;
+          }
+
+          # Handling errors
+          error_page 500 502 503 504 /50x.html;
+          location = /50x.html {
+              root /usr/share/nginx/html;
+          }
+      }' > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
+volumes:
+  mysql_data:
+  postgres_data:
+  review_data:
+  search_data:
