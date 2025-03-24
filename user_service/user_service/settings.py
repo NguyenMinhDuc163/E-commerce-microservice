@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -112,15 +113,23 @@ WSGI_APPLICATION = 'user_service.wsgi.application'
 #         'PORT': '3306',        # Cổng MySQL (mặc định là 3306)
 #     }
 # }
+if not os.environ.get('DJANGO_DOCKER_ENV'):
+   load_dotenv()
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DATABASE_NAME', 'user_service'),
-        'USER': os.environ.get('DATABASE_USER', 'root'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'NguyenDuc@163'),
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
-        'PORT': os.environ.get('DATABASE_PORT', '3306'),
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': os.environ.get('DATABASE_NAME', 'user_service'),
+       'USER': os.environ.get('DATABASE_USER', 'root'),
+       'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+       'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+       'PORT': os.environ.get('DATABASE_PORT', '3306'),
+       'OPTIONS': {
+           'charset': 'utf8mb4',
+           # Thêm các tùy chọn kết nối MySQL
+           'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+       }
+   }
 }
 
 # Password validation
