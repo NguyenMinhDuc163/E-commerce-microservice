@@ -38,4 +38,4 @@ build/
 *.so
 *.dylib
 
-.env
+order_service/.env

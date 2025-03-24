@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -81,14 +83,21 @@ WSGI_APPLICATION = 'payment_service.wsgi.application'
 #         'PORT': 5432
 #     }
 # }
+if not os.environ.get('DJANGO_DOCKER_ENV'):
+    load_dotenv()
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DATABASE_NAME', 'mydb'),
         'USER': os.environ.get('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'NguyenDuc@163'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
         'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
         'PORT': os.environ.get('DATABASE_PORT', '5432'),
+        # Thêm các option tùy chọn cho PostgreSQL
+        'OPTIONS': {
+            # Nếu cần thiết, có thể thêm các option khác
+        }
     }
 }
 

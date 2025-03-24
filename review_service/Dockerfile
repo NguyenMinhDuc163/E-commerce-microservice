@@ -3,6 +3,7 @@ FROM python:3.10-slim
 # Thiết lập biến môi trường
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV DJANGO_DOCKER_ENV=1
 
 # Thiết lập thư mục làm việc
 WORKDIR /app

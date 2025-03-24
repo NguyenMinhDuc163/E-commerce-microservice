@@ -1,0 +1,12 @@
+# Bỏ qua file .env của từng service
+env/.env
+
+# Các file log của service
+*.log
+
+# Các file uploads (nếu có)
+media/
+uploads/
+
+# Các file static được generate
+staticfiles/

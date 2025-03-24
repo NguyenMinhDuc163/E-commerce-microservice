@@ -1,3 +1,4 @@
+
 docker run -p 8002:8000 \
   -e DATABASE_HOST=host.docker.internal \
   -e DATABASE_NAME=mydb \

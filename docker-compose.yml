@@ -42,6 +42,7 @@ services:
       mysql:
         condition: service_healthy
     environment:
+      - DJANGO_DOCKER_ENV=1
       - DATABASE_HOST=mysql
       - DATABASE_NAME=cart_service
       - DATABASE_USER=root
@@ -57,6 +58,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      - DJANGO_DOCKER_ENV=1
       - DATABASE_HOST=postgres
       - DATABASE_NAME=mydb
       - DATABASE_USER=postgres
@@ -71,6 +73,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      - DJANGO_DOCKER_ENV=1
       - DATABASE_HOST=postgres
       - DATABASE_NAME=mydb
       - DATABASE_USER=postgres
@@ -82,6 +85,7 @@ services:
   product_service:
     image: nguyenduc1603/product_service:v1.0.0
     environment:
+      - DJANGO_DOCKER_ENV=1
       - MONGODB_URI=mongodb+srv://nguyenduc:bMfuLqGps59NJLI8@cluster0.ld2i8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       - MONGODB_DB_NAME=book_app
     ports:
@@ -90,6 +94,8 @@ services:
   # Review Service - Volume only
   review_service:
     image: nguyenduc1603/review_service:v1.0.0
+    environment:
+      - DJANGO_DOCKER_ENV=1
     volumes:
       - review_data:/app/data
     ports:
@@ -98,6 +104,8 @@ services:
   # Search Service - Volume only
   search_service:
     image: nguyenduc1603/search_service:v1.0.0
+    environment:
+      - DJANGO_DOCKER_ENV=1
     volumes:
       - search_data:/app/data
     ports:
@@ -110,6 +118,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      - DJANGO_DOCKER_ENV=1
       - DATABASE_HOST=postgres
       - DATABASE_NAME=mydb
       - DATABASE_USER=postgres
@@ -124,6 +133,7 @@ services:
       mysql:
         condition: service_healthy
     environment:
+      - DJANGO_DOCKER_ENV=1
       - DATABASE_HOST=mysql
       - DATABASE_NAME=user_service
       - DATABASE_USER=root
