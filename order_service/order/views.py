@@ -8,6 +8,8 @@ import json
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.generics import RetrieveAPIView
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.types import OpenApiTypes
 
 
 # Hàm gọi API verify_token để lấy user_id
@@ -61,6 +63,27 @@ def create_payment(order_item_id, user_id, payment_type):
     return None
 
 class AddToOrderView(APIView):
+    @extend_schema(
+        summary="Thêm sản phẩm vào đơn hàng",
+        description="API để thêm sản phẩm vào đơn hàng mới",
+        request={
+            'application/json': {
+                'type': 'object',
+                'properties': {
+                    'product_id': {'type': 'string'},
+                    'quantity': {'type': 'integer'},
+                    'type': {'type': 'string', 'enum': ['book', 'mobile', 'clothes']},
+                    'username': {'type': 'string'},
+                    'address': {'type': 'string'},
+                    'phone': {'type': 'string'},
+                    'shipment_type': {'type': 'string'},
+                    'payment_type': {'type': 'string'}
+                },
+                'required': ['product_id', 'quantity', 'type', 'username', 'address', 'phone', 'shipment_type', 'payment_type']
+            }
+        },
+        responses={201: OrderItemSerializer}
+    )
     @csrf_exempt
     def post(self, request):
         token = request.headers.get('Authorization').split()[1]
@@ -124,12 +147,29 @@ class AddToOrderView(APIView):
 
 
 class OrderItemListView(APIView):
+    @extend_schema(
+        summary="Lấy danh sách tất cả đơn hàng",
+        description="API để lấy danh sách tất cả các đơn hàng",
+        responses={200: OrderItemSerializer(many=True)}
+    )
     def get(self, request):
         order_items = OrderItem.objects.all()
         serializer = OrderItemSerializer(order_items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class OrderListByStatus(APIView):
+    @extend_schema(
+        summary="Lấy danh sách đơn hàng theo trạng thái",
+        description="API để lấy danh sách các đơn hàng theo trạng thái",
+        parameters=[
+            OpenApiParameter(
+                name='status',
+                type=OpenApiTypes.STR,
+                description='Trạng thái đơn hàng'
+            )
+        ],
+        responses={200: OrderItemSerializer(many=True)}
+    )
     def get(self, request):
         status_param = request.query_params.get('status')
         order_items = OrderItem.objects.filter(status=status_param)
@@ -194,6 +234,18 @@ class OrderDetailView(RetrieveAPIView):
     serializer_class = OrderItemSerializer
     lookup_field = 'order_item_id'
 
+    @extend_schema(
+        summary="Lấy chi tiết đơn hàng",
+        description="API để lấy thông tin chi tiết của một đơn hàng",
+        parameters=[
+            OpenApiParameter(
+                name='order_item_id',
+                type=OpenApiTypes.INT,
+                description='ID của đơn hàng'
+            )
+        ],
+        responses={200: OrderItemSerializer}
+    )
     def get(self, request, *args, **kwargs):
         # token = request.headers.get('Authorization').split()[1]
         # user_id = verify_token(token)

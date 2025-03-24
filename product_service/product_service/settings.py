@@ -39,9 +39,31 @@ INSTALLED_APPS = [
     'rest_framework',
     "mobile.apps.MobileConfig",
     "book.apps.BookConfig",
-    "clothes.apps.ClothesConfig"
+    "clothes.apps.ClothesConfig",
+    'drf_spectacular',
+    'drf_spectacular_sidecar',  # Tùy chọn: Để sử dụng Swagger UI
 ]
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Product Service API',
+    'DESCRIPTION': 'API documentation for Product Service',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+        'filter': True,
+    },
+}
+REST_FRAMEWORK = {
+    # Sử dụng Spectacular làm schema mặc định
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
+    # Cấu hình phân trang (tùy chọn)
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

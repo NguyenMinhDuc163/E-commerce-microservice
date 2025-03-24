@@ -7,6 +7,8 @@ from .serializers import PaymentStatusSerializer
 from shipment_update.views import shipment_details_update
 import requests
 from django.utils.timezone import now
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.types import OpenApiTypes
 
 def verify_token(token):
     url = 'http://127.0.0.1:8002/api/user_service/verify_token/'
@@ -31,6 +33,44 @@ def check_shipment(shipment_id):
     return response.json()
 
 class CreatePaymentView(APIView):
+    @extend_schema(
+        summary="Tạo thanh toán mới",
+        description="API để tạo một thanh toán mới cho đơn hàng",
+        request={
+            'application/json': {
+                'type': 'object',
+                'properties': {
+                    'order_item_id': {'type': 'integer', 'description': 'ID của đơn hàng'},
+                    'payment_type': {'type': 'string', 'description': 'Loại thanh toán'},
+                },
+                'required': ['order_item_id', 'payment_type']
+            }
+        },
+        responses={
+            200: {
+                'type': 'object',
+                'properties': {
+                    'payment_id': {'type': 'integer', 'description': 'ID của thanh toán mới tạo'}
+                }
+            },
+            400: {
+                'type': 'object',
+                'properties': {
+                    'status': {'type': 'string'},
+                    'status_code': {'type': 'integer'},
+                    'message': {'type': 'string'}
+                }
+            },
+            401: {
+                'type': 'object',
+                'properties': {
+                    'status': {'type': 'string'},
+                    'status_code': {'type': 'integer'},
+                    'message': {'type': 'string'}
+                }
+            }
+        }
+    )
     @csrf_exempt
     def post(self, request):
         user_id = request.data.get('user_id')

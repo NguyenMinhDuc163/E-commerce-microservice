@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.views import APIView
 import requests
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from cart.authentication import SafeJWTAuthentication
 from cart.models import CartItem
@@ -28,6 +30,23 @@ def verify(request):
 class CartView(APIView):
 
     authentication_classes = [SafeJWTAuthentication]
+
+    @extend_schema(
+        summary='Lấy danh sách giỏ hàng',
+        description='API này trả về danh sách các sản phẩm trong giỏ hàng của người dùng',
+        responses={
+            200: CartItemSerializer(many=True),
+            401: OpenApiTypes.OBJECT
+        },
+        parameters=[
+            OpenApiParameter(
+                name='Authorization',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.HEADER,
+                description='Bearer token để xác thực người dùng'
+            )
+        ]
+    )
     def get(self, request):
         data_verify = verify(request)
         if not data_verify['status']:
@@ -44,6 +63,24 @@ class CartView(APIView):
         return JsonResponse({"data": cart}, status=status.HTTP_200_OK, safe=False)
 
 
+    @extend_schema(
+        summary='Thêm sản phẩm vào giỏ hàng',
+        description='API này cho phép thêm một sản phẩm mới vào giỏ hàng',
+        request=CartItemSerializer,
+        responses={
+            201: CartItemSerializer,
+            400: OpenApiTypes.OBJECT,
+            401: OpenApiTypes.OBJECT
+        },
+        parameters=[
+            OpenApiParameter(
+                name='Authorization',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.HEADER,
+                description='Bearer token để xác thực người dùng'
+            )
+        ]
+    )
     def post(self, request):
         data_verify = verify(request)
         if not data_verify['status']:
@@ -58,6 +95,29 @@ class CartView(APIView):
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        summary='Xóa sản phẩm khỏi giỏ hàng',
+        description='API này cho phép xóa một sản phẩm khỏi giỏ hàng',
+        responses={
+            200: OpenApiTypes.OBJECT,
+            401: OpenApiTypes.OBJECT,
+            404: OpenApiTypes.OBJECT
+        },
+        parameters=[
+            OpenApiParameter(
+                name='Authorization',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.HEADER,
+                description='Bearer token để xác thực người dùng'
+            ),
+            OpenApiParameter(
+                name='cart_id',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description='ID của sản phẩm trong giỏ hàng cần xóa'
+            )
+        ]
+    )
     def delete(self, request, cart_id):
         data_verify = verify(request)
         if not data_verify['status']:

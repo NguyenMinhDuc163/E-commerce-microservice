@@ -7,6 +7,8 @@ from .serializers import ShipmentSerializer
 import requests
 import json
 from rest_framework.generics import RetrieveAPIView
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.types import OpenApiTypes
 
 
 def verify_token(token):
@@ -26,6 +28,43 @@ def check_order_item(order_item_id):
     return response.json()
 
 class ShipmentCreateView(APIView):
+    @extend_schema(
+        summary="Tạo đơn vận chuyển mới",
+        description="API để tạo một đơn vận chuyển mới cho một đơn hàng",
+        request={
+            'application/json': {
+                'type': 'object',
+                'properties': {
+                    'order_item_id': {'type': 'integer', 'description': 'ID của đơn hàng'},
+                },
+                'required': ['order_item_id']
+            }
+        },
+        responses={
+            200: {
+                'type': 'object',
+                'properties': {
+                    'shipment_id': {'type': 'integer', 'description': 'ID của đơn vận chuyển mới tạo'}
+                }
+            },
+            400: {
+                'type': 'object',
+                'properties': {
+                    'status': {'type': 'string'},
+                    'status_code': {'type': 'integer'},
+                    'message': {'type': 'string'}
+                }
+            },
+            401: {
+                'type': 'object',
+                'properties': {
+                    'status': {'type': 'string'},
+                    'status_code': {'type': 'integer'},
+                    'message': {'type': 'string'}
+                }
+            }
+        }
+    )
     def post(self, request):
         user_id = request.data.get('user_id')
         print(user_id)
@@ -55,6 +94,28 @@ class ShipmentCreateView(APIView):
 
 
 class ShipmentStatusView(APIView):
+    @extend_schema(
+        summary="Xem trạng thái vận chuyển",
+        description="API để xem trạng thái vận chuyển của một đơn hàng",
+        responses={
+            200: {
+                'type': 'object',
+                'properties': {
+                    'status': {'type': 'string'},
+                    'status_code': {'type': 'integer'},
+                    'message': {'type': 'object'}
+                }
+            },
+            400: {
+                'type': 'object',
+                'properties': {
+                    'status': {'type': 'string'},
+                    'status_code': {'type': 'integer'},
+                    'message': {'type': 'string'}
+                }
+            }
+        }
+    )
     def post(self, request):
         #         if request.content_type == 'application/json':
         #             data = json.loads(request.body)
@@ -74,6 +135,27 @@ class ShipmentDetailView(RetrieveAPIView):
     serializer_class = ShipmentSerializer
     lookup_field = 'id'
 
+    @extend_schema(
+        summary="Xem chi tiết đơn vận chuyển",
+        description="API để xem chi tiết của một đơn vận chuyển theo ID",
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description='ID của đơn vận chuyển'
+            )
+        ],
+        responses={
+            200: ShipmentSerializer,
+            404: {
+                'type': 'object',
+                'properties': {
+                    'detail': {'type': 'string'}
+                }
+            }
+        }
+    )
     def get(self, request, *args, **kwargs):
         # token = request.headers.get('Authorization').split()[1]
         # user_id = verify_token(token)

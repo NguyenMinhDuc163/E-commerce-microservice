@@ -32,6 +32,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'cart',
+
+    # Swagger
+    'drf_spectacular',
+    'drf_spectacular_sidecar',  # Tùy chọn: Để sử dụng Swagger UI
 ]
 
 MIDDLEWARE = [
@@ -90,7 +94,11 @@ DATABASES = {
         'PORT': os.environ.get('DATABASE_PORT', '3306'),
     }
 }
-
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Tên Project của bạn',
+    'DESCRIPTION': 'Mô tả API',
+    'VERSION': '1.0.0',
+}
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -121,6 +129,13 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',  # Bạn cũng có thể sử dụng Session Authentication nếu cần thiết
     ],
+
+    # Sử dụng Spectacular làm schema mặc định
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    # Cấu hình phân trang (tùy chọn)
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 # Internationalization
