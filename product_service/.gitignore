@@ -1,5 +1,5 @@
 # Bỏ qua file .env của từng service
-/env/.env
+.env
 
 # Các file log của service
 *.log
