@@ -22,7 +22,7 @@ PORT = 8001
 CORS_ALLOW_ALL_ORIGINS = True
 ALLOWED_HOSTS = ['*']
 
-load_dotenv(os.path.join(BASE_DIR, 'env/.env'))
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 MONGODB_URI = os.getenv("MONGODB_URI")
 MONGO_DB_NAME = os.getenv("MONGODB_DB_NAME")
 
