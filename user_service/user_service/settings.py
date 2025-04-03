@@ -71,12 +71,19 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework.renderers.JSONRenderer',
     ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [],  # Tạm thời tắt
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Tạm thời cho phép tất cả
+    ],
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
     ),
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',  # Thêm dòng này
+    # ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
@@ -121,7 +128,7 @@ DATABASES = {
        'ENGINE': 'django.db.backends.mysql',
        'NAME': os.environ.get('DATABASE_NAME', 'user_service'),
        'USER': os.environ.get('DATABASE_USER', 'root'),
-       'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+       'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'NguyenDuc@163'),
        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
        'PORT': os.environ.get('DATABASE_PORT', '3306'),
        'OPTIONS': {

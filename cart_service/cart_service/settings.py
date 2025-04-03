@@ -104,7 +104,7 @@ DATABASES = {
     }
 }
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Tên Project của bạn',
+    'TITLE': 'Cart service',
     'DESCRIPTION': 'Mô tả API',
     'VERSION': '1.0.0',
 }

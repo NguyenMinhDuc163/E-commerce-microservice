@@ -73,41 +73,61 @@ class CreatePaymentView(APIView):
     )
     @csrf_exempt
     def post(self, request):
-        user_id = request.data.get('user_id')
-        if not user_id:
-            return Response({'status': 'Failed', 'status_code': 401, 'message': 'Invalid token'},
+        # Lấy token từ header
+        authorization_header = request.headers.get('Authorization')
+        if not authorization_header:
+            return Response({'status': 'Failed', 'status_code': 401, 'message': 'Missing Authorization header'},
                             status=status.HTTP_401_UNAUTHORIZED)
 
-        data = request.data
-        order_item_id = data.get('order_item_id')
-        order_item = check_order_item(order_item_id)
-        print(order_item)
-        if not order_item:
-            return Response({'status': 'Failed', 'status_code': 400, 'message': 'Invalid order item ID.'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Tách token từ header
+            token = authorization_header.split()[1]
 
-        data['user_id'] = user_id
-        data['order_item_id'] = order_item_id
-        data['status'] = 'Success'
-        data['payment_date'] = now().date().isoformat()
-        shipment = check_shipment(order_item.get('shipment_id'))
-        if not shipment:
-            return Response({'status': 'Failed', 'status_code': 400, 'message': 'Invalid shipment ID.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        data['price'] = shipment.get('price') + order_item.get('total')
-        serializer = PaymentStatusSerializer(data=data)
-        print("Data to be stored:", data)
-        if serializer.is_valid():
-            payment = serializer.save()
-            print("Data stored successfully")
-        else:
-            print("Errors:", serializer.errors)
-            return False
-        # shipment_response = shipment_details_update(data['user_id'], data['order_item_id'])
-        # if shipment_response.get('status') == 'Success':
-        return Response({'payment_id': payment.id}, status=status.HTTP_200_OK)
-        # else:
-            # return Response({'status': 'Failed', 'status_code': 400, 'message': 'Transaction failed.'},
-            #                 status=status.HTTP_400_BAD_REQUEST)
+            # Xác thực token và lấy user_id
+            user_id = verify_token(token)
+            print("=====>", user_id)
+
+            if not user_id:
+                return Response({'status': 'Failed', 'status_code': 401, 'message': 'Invalid token'},
+                                status=status.HTTP_401_UNAUTHORIZED)
+
+            data = request.data
+            order_item_id = data.get('order_item_id')
+            order_item = check_order_item(order_item_id)
+            print(order_item)
+            if not order_item:
+                return Response({'status': 'Failed', 'status_code': 400, 'message': 'Invalid order item ID.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            # Tạo một bản sao của data để không thay đổi dữ liệu gốc
+            data_copy = data.copy() if hasattr(data, 'copy') else dict(data)
+            data_copy['user_id'] = user_id
+            data_copy['order_item_id'] = order_item_id
+            data_copy['status'] = 'Success'
+            data_copy['payment_date'] = now().date().isoformat()
+
+            shipment = check_shipment(order_item.get('shipment_id'))
+            if not shipment:
+                return Response({'status': 'Failed', 'status_code': 400, 'message': 'Invalid shipment ID.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            data_copy['price'] = shipment.get('price') + order_item.get('total')
+            serializer = PaymentStatusSerializer(data=data_copy)
+            print("Data to be stored:", data_copy)
+
+            if serializer.is_valid():
+                payment = serializer.save()
+                print("Data stored successfully")
+                return Response({'payment_id': payment.id}, status=status.HTTP_200_OK)
+            else:
+                print("Errors:", serializer.errors)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except IndexError:
+            return Response({'status': 'Failed', 'status_code': 401, 'message': 'Invalid Authorization format'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'status': 'Failed', 'status_code': 500, 'message': str(e)},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DATABASE_NAME', 'mydb'),
         'USER': os.environ.get('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'NguyenDuc@163'),
         'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
         'PORT': os.environ.get('DATABASE_PORT', '5432'),
         # Thêm các option tùy chọn cho PostgreSQL

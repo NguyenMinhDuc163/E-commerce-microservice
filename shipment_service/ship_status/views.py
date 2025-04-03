@@ -14,7 +14,6 @@ from drf_spectacular.types import OpenApiTypes
 def verify_token(token):
     url = 'http://127.0.0.1:8002/api/user_service/verify_token/'
     headers = {'Authorization': f'Bearer {token}'}
-    print(token)
     response = requests.post(url, headers=headers)
     print(response)
     if response.status_code == 200:
@@ -66,31 +65,69 @@ class ShipmentCreateView(APIView):
         }
     )
     def post(self, request):
-        user_id = request.data.get('user_id')
-        print(user_id)
-        if not user_id:
-            return Response({'status': 'Failed', 'status_code': 401, 'message': 'Invalid token'},
+        # Lấy token từ header Authorization
+        authorization_header = request.headers.get('Authorization')
+        if not authorization_header:
+            return Response({'status': 'Failed', 'status_code': 401, 'message': 'Missing Authorization header'},
                             status=status.HTTP_401_UNAUTHORIZED)
 
-        if request.content_type == 'application/json':
-            data = request.data
-            order_item_id = data.get('order_item_id')
-            if not check_order_item(order_item_id):
-                return Response({'status': 'Failed', 'status_code': 400, 'message': 'Invalid order item ID'},
+        try:
+            # Tách token từ header (bỏ phần 'Bearer ')
+            token = authorization_header.split()[1]
+
+            # Xác thực token và lấy user_id
+            user_id = verify_token(token)
+            print("======= > ", user_id)
+
+            if not user_id:
+                return Response({'status': 'Failed', 'status_code': 401, 'message': 'Invalid token'},
+                                status=status.HTTP_401_UNAUTHORIZED)
+
+            # Lấy thông tin chi tiết của user dùng token
+            user_info_url = 'http://localhost:8002/api/user_service/user_info/'
+            user_info_headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
+            user_info_response = requests.get(user_info_url, headers=user_info_headers)
+
+            if user_info_response.status_code != 200:
+                return Response({'status': 'Failed', 'status_code': 400, 'message': 'Cannot get user information'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-            data['user_id'] = user_id
-            data['shipment_status'] = 'Not ship'
+            user_info = user_info_response.json()
 
-            serializer = ShipmentSerializer(data=data)
-            print(serializer)
-            if serializer.is_valid():
-                shipment = serializer.save()
-                return Response({'shipment_id': shipment.id}, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Xử lý dữ liệu từ request
+            if request.content_type == 'application/json':
+                data = request.data
+                order_item_id = data.get('order_item_id')
+                if not check_order_item(order_item_id):
+                    return Response({'status': 'Failed', 'status_code': 400, 'message': 'Invalid order item ID'},
+                                    status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'status': 'Failed', 'status_code': 400, 'message': 'Invalid content type.'},
-                        status=status.HTTP_400_BAD_REQUEST)
+                # Tạo dữ liệu cho serializer
+                shipment_data = {
+                    'user_id': user_id,
+                    'order_item_id': order_item_id,
+                    'username': user_info.get('username'),
+                    'address': user_info.get('address'),
+                    'phone': user_info.get('phone'),
+                    'shipment_status': 'Not ship',
+                    'shipment_type': data.get('shipment_type', 'ECONOMICAL')  # Lấy từ request hoặc dùng mặc định
+                }
+
+                serializer = ShipmentSerializer(data=shipment_data)
+                print(serializer)
+                if serializer.is_valid():
+                    shipment = serializer.save()
+                    return Response({'shipment_id': shipment.id}, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({'status': 'Failed', 'status_code': 400, 'message': 'Invalid content type.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        except IndexError:
+            return Response({'status': 'Failed', 'status_code': 401, 'message': 'Invalid Authorization format'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'status': 'Failed', 'status_code': 500, 'message': str(e)},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ShipmentStatusView(APIView):

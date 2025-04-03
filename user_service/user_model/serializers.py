@@ -62,7 +62,7 @@ class UserSerializer(serializers.ModelSerializer):
         try:
             serializer = AccountSerializer(data=account_data)
             if not serializer.is_valid():
-                raise serializers.ValidationError(serializers.errors)
+                raise serializers.ValidationError(serializer.errors)
             else:
                 account = serializer.save()
 

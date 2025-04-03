@@ -14,9 +14,11 @@ from cart.serializers import CartItemSerializer
 def verify(request):
     url_verify = 'http://localhost:8002/api/user_service/verify_token/'
     token = request.headers['Authorization'].split()[1]
+
     headers = {
         'Authorization': f'Bearer {token}'
     }
+
     response_verify = requests.post(url_verify, headers=headers)
     if response_verify.status_code == 200:
         return {
