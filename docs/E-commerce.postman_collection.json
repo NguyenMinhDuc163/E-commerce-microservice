@@ -1,0 +1,835 @@
+{
+	"info": {
+		"_postman_id": "b60a5fb3-3385-4351-a399-a15cc9c14030",
+		"name": "E-commerce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "33433803"
+	},
+	"item": [
+		{
+			"name": "order service",
+			"item": [
+				{
+					"name": "add_to_order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-CSRFTOKEN",
+								"value": "xXseZduGM9V3GvLzameloFY9IDpYXgJUSeNtCispU6VFQAxap6Wi0wSKjyRq8XYA"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_id\": \"0\",\n  \"quantity\": 0,\n  \"type\": \"book\",\n  \"username\": \"string\",\n  \"address\": \"string\",\n  \"phone\": \"string\",\n  \"shipment_type\": \"string\",\n  \"payment_type\": \"string\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{order_url}}/api/order_service/add_to_order/"
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{order_url}}/api/order_service/all/"
+					},
+					"response": []
+				},
+				{
+					"name": "status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "{{order_url}}/api/order_service/all/status/"
+					},
+					"response": []
+				},
+				{
+					"name": "detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8005/api/order_service/detail/0/?order_item_id=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8005",
+							"path": [
+								"api",
+								"order_service",
+								"detail",
+								"0",
+								""
+							],
+							"query": [
+								{
+									"key": "order_item_id",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "search service",
+			"item": [
+				{
+					"name": "search_books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "http://localhost:8009/api/search_service/search_books/"
+					},
+					"response": []
+				},
+				{
+					"name": "search_by_key",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "http://localhost:8009/api/search_service/search_by_key/"
+					},
+					"response": []
+				},
+				{
+					"name": "search_clothes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "http://localhost:8009/api/search_service/search_clothes/"
+					},
+					"response": []
+				},
+				{
+					"name": "search_mobiles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "http://localhost:8009/api/search_service/search_mobiles/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cart service",
+			"item": [
+				{
+					"name": "add_to_order",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{cart_url}}/api/cart_service/cart/"
+					},
+					"response": []
+				},
+				{
+					"name": "cart_service - cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-CSRFTOKEN",
+								"value": "TFeEyihG1Z1SIDAy1F5HLsayzLs2MmQOeWzTbnfp9W1uSIm9gpNEnj49aGUuX35u"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 2147483647,\n  \"product_id\": \"string\",\n  \"type\": \"string\",\n  \"quantity\": 2147483647\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{cart_url}}/api/cart_service/cart/"
+					},
+					"response": []
+				},
+				{
+					"name": "order_service status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-CSRFTOKEN",
+								"value": "TFeEyihG1Z1SIDAy1F5HLsayzLs2MmQOeWzTbnfp9W1uSIm9gpNEnj49aGUuX35u"
+							},
+							{
+								"key": "cart_id",
+								"value": "1",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{cart_url}}/api/cart_service/cart/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user_service",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer "
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-CSRFTOKEN",
+								"value": "Up4IwAX6GVqUIYBa9hoPCCgLeNF55w0CfGpX9FVPOSqwS3nLo16MetamPI7xgdfi"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"traj10x@gmail.com\",\r\n  \"phone\": \"0916562796\",\r\n  \"address_\": \"Thai Binh\",\r\n  \"first_name\": \"Nguyen \",\r\n  \"last_name\": \"Minh\",\r\n  \"username\": \"Duc1\",\r\n  \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_url}}/api/user_service/create_user/",
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8000/api/user_service/create_user/' \\\r\n  -H 'accept: application/json' \\\r\n  -H 'Authorization: Bearer đw' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'X-CSRFTOKEN: Up4IwAX6GVqUIYBa9hoPCCgLeNF55w0CfGpX9FVPOSqwS3nLo16MetamPI7xgdfi' \\\r\n  -d '{\r\n  \"email\": \"traj10x@gmail.com\",\r\n  \"phone\": \"0916562796\",\r\n  \"address_\": \"Thai Binh\",\r\n  \"first_name\": \"Nguyen \",\r\n  \"last_name\": \"Minh\",\r\n  \"username\": \"Duc\",\r\n  \"password\": \"123456\"\r\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Lấy response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Kiểm tra nếu response có chứa token\r",
+									"if (jsonData.token) {\r",
+									"    // Lưu token vào biến môi trường\r",
+									"    pm.environment.set(\"authToken\", jsonData.token);\r",
+									"    console.log(\"Access token đã được lưu vào biến authToken\");\r",
+									"    \r",
+									"    // Lưu refresh token (nếu cần)\r",
+									"    if (jsonData.refresh) {\r",
+									"        pm.environment.set(\"refreshToken\", jsonData.refresh);\r",
+									"        console.log(\"Refresh token đã được lưu vào biến refreshToken\");\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"// Kiểm tra request đã thành công\r",
+									"pm.test(\"Đăng nhập thành công\", function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.expect(jsonData).to.have.property('token');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-CSRFTOKEN",
+								"value": "Up4IwAX6GVqUIYBa9hoPCCgLeNF55w0CfGpX9FVPOSqwS3nLo16MetamPI7xgdfi"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Duc\",\r\n  \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_url}}/api/user_service/",
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8000/api/user_service/' \\\r\n  -H 'accept: application/json' \\\r\n  -H 'Authorization: Bearer đw' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'X-CSRFTOKEN: Up4IwAX6GVqUIYBa9hoPCCgLeNF55w0CfGpX9FVPOSqwS3nLo16MetamPI7xgdfi' \\\r\n  -d '{\r\n  \"username\": \"Duc\",\r\n  \"password\": \"123456\"\r\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "get_info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "{{user_url}}/api/user_service/user_info/",
+						"description": "Generated from cURL: curl -X 'GET' \\\r\n  'http://localhost:8000/api/user_service/user_info/' \\\r\n  -H 'accept: application/json'"
+					},
+					"response": []
+				},
+				{
+					"name": "verify_token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-CSRFTOKEN",
+								"value": "Up4IwAX6GVqUIYBa9hoPCCgLeNF55w0CfGpX9FVPOSqwS3nLo16MetamPI7xgdfi"
+							}
+						],
+						"url": "{{user_url}}/api/user_service/verify_token/",
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8000/api/user_service/verify_token/' \\\r\n  -H 'accept: application/json' \\\r\n  -H 'X-CSRFTOKEN: Up4IwAX6GVqUIYBa9hoPCCgLeNF55w0CfGpX9FVPOSqwS3nLo16MetamPI7xgdfi' \\\r\n  -d ''"
+					},
+					"response": []
+				},
+				{
+					"name": "verify_token Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "X-CSRFTOKEN",
+								"value": "Up4IwAX6GVqUIYBa9hoPCCgLeNF55w0CfGpX9FVPOSqwS3nLo16MetamPI7xgdfi"
+							}
+						],
+						"url": "{{user_url}}/api/user_service/verify_token/",
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8000/api/user_service/verify_token/' \\\r\n  -H 'accept: application/json' \\\r\n  -H 'X-CSRFTOKEN: Up4IwAX6GVqUIYBa9hoPCCgLeNF55w0CfGpX9FVPOSqwS3nLo16MetamPI7xgdfi' \\\r\n  -d ''"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Shipment Service",
+			"item": [
+				{
+					"name": "shipment_service",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-CSRFTOKEN",
+								"value": "rid5Gwtg4X0evURtGxhpRIMpoioAxS9CMzykjBrZcU0QFZD4VhZmtzG0ZdQ2Izoi"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order_item_id\": 0\n//   \"user_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{shipment_url}}/api/shipment_service/create/"
+					},
+					"response": []
+				},
+				{
+					"name": "detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "{{shipment_url}}/api/shipment_service/detail/1/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payment service",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-CSRFTOKEN",
+								"value": "muxJsp1FYoNFDDvNlWPghZLYqQA1on6iHLSY5uZo6lNhNIhoAGxdTQFz1L2tz4lY"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order_item_id\": 1,\n  \"payment_type\": \"string\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{payment_url}}/api/payment_service/create/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "produc service",
+			"item": [
+				{
+					"name": "get_book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "{{product_url}}/api/product_service/book/get_book/661234567890abcdef123456"
+					},
+					"response": []
+				},
+				{
+					"name": "search_books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": "{{product_url}}/api/product_service/book/search_books/"
+					},
+					"response": []
+				},
+				{
+					"name": "clothes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": "{{product_url}}/api/product_service/clothes/get_clothes/"
+					},
+					"response": []
+				},
+				{
+					"name": "mobile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": "{{product_url}}/api/product_service/mobile/get_mobiles/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "review service",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{authToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{review_service}}/api/review_service/reviews/?product_id=1&product_type=1",
+							"host": [
+								"{{review_service}}"
+							],
+							"path": [
+								"api",
+								"review_service",
+								"reviews",
+								""
+							],
+							"query": [
+								{
+									"key": "product_id",
+									"value": "1"
+								},
+								{
+									"key": "product_type",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "customers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/customers/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"customers",
+						""
+					],
+					"query": [
+						{
+							"key": "first_name",
+							"value": "Nguyễn",
+							"disabled": true
+						},
+						{
+							"key": "last_name",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "email ",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add_item",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{url}}/api/cart",
+				"description": "Generated from cURL: curl -X POST http://localhost:8000/api/cart/1/add_item/ \\\r\n     -H \"Content-Type: application/json\" \\\r\n     -d '{\"book_id\": 1, \"quantity\": 2}'\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "book",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{url}}/api/book/",
+				"description": "Generated from cURL: curl -X GET http://localhost:8000/api/book/\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
