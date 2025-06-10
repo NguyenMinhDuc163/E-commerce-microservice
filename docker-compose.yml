@@ -4,7 +4,7 @@ services:
     image: mysql:5.7
     container_name: mysql-container-new
     environment:
-      MYSQL_ROOT_PASSWORD: NguyenDuc@163
+      MYSQL_ROOT_PASSWORD: YOUR_MYSQL_PASSWORD_HERE
       MYSQL_DATABASE: user_service
     ports:
       - "3307:3306"
@@ -12,7 +12,7 @@ services:
       - mysql_data:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pNguyenDuc@163"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pYOUR_MYSQL_PASSWORD_HERE"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,7 +22,7 @@ services:
     image: postgres:latest
     container_name: postgres-container-new
     environment:
-      POSTGRES_PASSWORD: NguyenDuc@163
+      POSTGRES_PASSWORD: YOUR_POSTGRES_PASSWORD_HERE
       POSTGRES_USER: postgres
       POSTGRES_DB: mydb
     ports:
@@ -49,7 +49,7 @@ services:
       - DATABASE_HOST=mysql
       - DATABASE_NAME=cart_service
       - DATABASE_USER=root
-      - DATABASE_PASSWORD=NguyenDuc@163
+      - DATABASE_PASSWORD=YOUR_MYSQL_PASSWORD_HERE
     ports:
       - "8003:8000"
     restart: on-failure
@@ -70,7 +70,7 @@ services:
       - DATABASE_HOST=postgres
       - DATABASE_NAME=mydb
       - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=NguyenDuc@163
+      - DATABASE_PASSWORD=YOUR_POSTGRES_PASSWORD_HERE
     ports:
       - "8005:8000"
 
@@ -92,7 +92,7 @@ services:
       - DATABASE_HOST=postgres
       - DATABASE_NAME=mydb
       - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=NguyenDuc@163
+      - DATABASE_PASSWORD=YOUR_POSTGRES_PASSWORD_HERE
     ports:
       - "8007:8000"
 
@@ -102,7 +102,7 @@ services:
     container_name: product-service-container
     environment:
       - DJANGO_DOCKER_ENV=1
-      - MONGODB_URI=mongodb+srv://nguyenduc:bMfuLqGps59NJLI8@cluster0.ld2i8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - MONGODB_URI=mongodb+srv://YOUR_MONGO_USERNAME:YOUR_MONGO_PASSWORD@your-cluster.mongodb.net/?retryWrites=true&w=majority&appName=YourAppName
       - MONGODB_DB_NAME=book_app
     ports:
       - "8001:8000"
@@ -150,7 +150,7 @@ services:
       - DATABASE_HOST=postgres
       - DATABASE_NAME=mydb
       - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=NguyenDuc@163
+      - DATABASE_PASSWORD=YOUR_POSTGRES_PASSWORD_HERE
     ports:
       - "8006:8000"
 
@@ -166,7 +166,7 @@ services:
       - DATABASE_HOST=mysql
       - DATABASE_NAME=user_service
       - DATABASE_USER=root
-      - DATABASE_PASSWORD=NguyenDuc@163
+      - DATABASE_PASSWORD=YOUR_MYSQL_PASSWORD_HERE
     ports:
       - "8002:8000"
     restart: on-failure

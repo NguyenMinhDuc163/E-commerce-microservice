@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@^f4js3q-rvv)*atc9)4f7ywymm*6=3y_zyj0s#@1smoobsrip'
+SECRET_KEY = 'YOUR_DJANGO_SECRET_KEY_HERE_CART_SERVICE'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -93,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('DATABASE_NAME', 'cart_service'),
         'USER': os.environ.get('DATABASE_USER', 'root'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'YOUR_MYSQL_PASSWORD_HERE'),
         'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
         'PORT': os.environ.get('DATABASE_PORT', '3306'),
         # Thêm các option tùy chọn cho MySQL

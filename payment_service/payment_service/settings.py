@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-d%pfq71cdtvb7zvqc5q#sop=u0b7bv+v*45cx*exag4!l=2a=-'
+SECRET_KEY = 'YOUR_DJANGO_SECRET_KEY_HERE_PAYMENT_SERVICE'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DATABASE_NAME', 'mydb'),
         'USER': os.environ.get('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'NguyenDuc@163'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'YOUR_POSTGRES_PASSWORD_HERE'),
         'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
         'PORT': os.environ.get('DATABASE_PORT', '5432'),
         # Thêm các option tùy chọn cho PostgreSQL

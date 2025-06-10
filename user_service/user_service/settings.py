@@ -9,8 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c)^qthpll2u&@pstz%x%ne3n@gsd3^zeejoz1nb7=dplqy#qe1'
-REFRESH_TOKEN_SECRET = 'django-insecure--^q4==usv27tzzdk(ka4atj4n5gatk@!7k@v&nh!-(=8e(7-$1'
+SECRET_KEY = 'YOUR_DJANGO_SECRET_KEY_HERE_USER_SERVICE'
+REFRESH_TOKEN_SECRET = 'YOUR_JWT_REFRESH_SECRET_HERE'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -137,7 +137,7 @@ DATABASES = {
        'ENGINE': 'django.db.backends.mysql',
        'NAME': os.environ.get('DATABASE_NAME', 'user_service'),
        'USER': os.environ.get('DATABASE_USER', 'root'),
-       'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'NguyenDuc@163'),
+       'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'YOUR_MYSQL_PASSWORD_HERE'),
        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
        'PORT': os.environ.get('DATABASE_PORT', '3306'),
        'OPTIONS': {

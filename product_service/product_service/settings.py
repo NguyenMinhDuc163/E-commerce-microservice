@@ -2,7 +2,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb+srv://nguyenduc:bMfuLqGps59NJLI8@cluster0.ld2i8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb+srv://YOUR_MONGO_USERNAME:YOUR_MONGO_PASSWORD@your-cluster.mongodb.net/?retryWrites=true&w=majority&appName=YourAppName')
 MONGO_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'book_app')
 
 
@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9hw0l$%)@9d%(-eqjm(+da(qw4)&@_qe78#)9irw%gf_oyu+l%'
+SECRET_KEY = 'YOUR_DJANGO_SECRET_KEY_HERE_PRODUCT_SERVICE'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

@@ -43,33 +43,89 @@
 | **Payment Service** | 8007 | Thanh toán | Xử lý thanh toán, refund |
 | **Review Service** | 8008 | Đánh giá | Đánh giá sản phẩm, rating |
 
+## ⚠️ **QUAN TRỌNG - BẢO MẬT**
+
+**Trước khi sử dụng, BẮT BUỘC phải thay đổi các thông tin sau:**
+
+### 🔐 Mật khẩu cần thay đổi:
+- `YOUR_MYSQL_PASSWORD_HERE` → Mật khẩu MySQL thực tế
+- `YOUR_POSTGRES_PASSWORD_HERE` → Mật khẩu PostgreSQL thực tế  
+- `YOUR_MONGO_USERNAME` và `YOUR_MONGO_PASSWORD` → Thông tin MongoDB thực tế
+
+### 🔑 Secret Keys cần thay đổi:
+Tất cả các `YOUR_DJANGO_SECRET_KEY_HERE_*` trong các file settings.py
+
+**Cách tạo Secret Key mới:**
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+### 📁 Các file cần chỉnh sửa:
+- `user_service/user_service/settings.py`
+- `cart_service/cart_service/settings.py`
+- `order_service/order_service/settings.py`
+- `payment_service/payment_service/settings.py`
+- `shipment_service/shipment_service/settings.py`
+- `product_service/product_service/settings.py`
+- `review_service/review_service/settings.py`
+- `search_service/search_service/settings.py`
+- `docker-compose.yml`
+
 ## 🚀 Hướng Dẫn Cài Đặt
 
-
+### Yêu Cầu Hệ Thống
+- **Python**: 3.8 hoặc cao hơn
+- **Django**: 3.1+
+- **Database**: MySQL, PostgreSQL, MongoDB
+- **Docker**: Để chạy toàn bộ hệ thống
+- **IDE**: PyCharm, VS Code
 
 ### Cài Đặt và Chạy
 
 1. **Clone repository**
    ```bash
    git clone [repository-url]
-   cd E-commerce-microservice
-
-
+   cd Software_Architecture_and_Design_PTIT
    ```
 
 2. **Cài đặt dependencies**
    ```bash
-   mvn clean install
+   # Tạo virtual environment
+   python -m venv .venv
+   source .venv/bin/activate  # Linux/Mac
+   # hoặc
+   .venv\Scripts\activate     # Windows
+   
+   # Cài đặt dependencies cho từng service
+   cd user_service && pip install -r requirements.txt
+   cd ../product_service && pip install -r requirements.txt
+   # ... tương tự cho các service khác
    ```
 
 3. **Cấu hình database**
-   - Tạo database cho mỗi service
-   - Cập nhật file `application.properties` trong mỗi service
+   - MySQL cho User Service và Cart Service
+   - PostgreSQL cho Order, Payment, Shipment Services
+   - MongoDB cho Product Service
+   - File-based storage cho Review và Search Services
 
-4. **Chạy các services** (theo thứ tự)
+4. **Chạy bằng Docker (Khuyến nghị)**
    ```bash
-   # Chạy từng service trên port tương ứng
-   mvn spring-boot:run -Dspring-boot.run.profiles=dev
+   # Chạy toàn bộ hệ thống
+   docker-compose up -d
+   
+   # Kiểm tra logs
+   docker-compose logs -f
+   ```
+
+5. **Chạy từng service riêng lẻ**
+   ```bash
+   # Chạy từng service
+   cd user_service
+   python manage.py runserver 8002
+   
+   cd ../product_service
+   python manage.py runserver 8001
+   # ... tương tự cho các service khác
    ```
 
 ## 📡 API Documentation
