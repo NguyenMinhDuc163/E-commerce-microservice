@@ -37,10 +37,13 @@ services:
 
   # Cart Service - MySQL
   cart_service:
-    image: nguyenduc1603/cart_service:v1.0.2
+    build: ./cart_service
+    container_name: cart-service-container
     depends_on:
       mysql:
         condition: service_healthy
+      user_service:
+        condition: service_started
     environment:
       - DJANGO_DOCKER_ENV=1
       - DATABASE_HOST=mysql
@@ -53,10 +56,15 @@ services:
 
   # Order Service - PostgreSQL
   order_service:
-    image: nguyenduc1603/order_service:v1.0.2
+    build: ./order_service
+    container_name: order-service-container
     depends_on:
       postgres:
         condition: service_healthy
+      user_service:
+        condition: service_started
+      product_service:
+        condition: service_started
     environment:
       - DJANGO_DOCKER_ENV=1
       - DATABASE_HOST=postgres
@@ -68,10 +76,17 @@ services:
 
   # Payment Service - PostgreSQL
   payment_service:
-    image: nguyenduc1603/payment_service:v1.0.2
+    build: ./payment_service
+    container_name: payment-service-container
     depends_on:
       postgres:
         condition: service_healthy
+      user_service:
+        condition: service_started
+      order_service:
+        condition: service_started
+      shipment_service:
+        condition: service_started
     environment:
       - DJANGO_DOCKER_ENV=1
       - DATABASE_HOST=postgres
@@ -83,7 +98,8 @@ services:
 
   # Product Service - MongoDB
   product_service:
-    image: nguyenduc1603/product_service:v1.0.2
+    build: ./product_service
+    container_name: product-service-container
     environment:
       - DJANGO_DOCKER_ENV=1
       - MONGODB_URI=mongodb+srv://nguyenduc:bMfuLqGps59NJLI8@cluster0.ld2i8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
@@ -93,7 +109,8 @@ services:
 
   # Review Service - Volume only
   review_service:
-    image: nguyenduc1603/review_service:v1.0.2
+    build: ./review_service
+    container_name: review-service-container
     environment:
       - DJANGO_DOCKER_ENV=1
     volumes:
@@ -103,9 +120,15 @@ services:
 
   # Search Service - Volume only
   search_service:
-    image: nguyenduc1603/search_service:v1.0.2
+    build: ./search_service
+    container_name: search-service-container
+    depends_on:
+      - product_service
     environment:
       - DJANGO_DOCKER_ENV=1
+      - PRODUCT_SERVICE_BOOK_URL=http://product-service-container:8000/api/product_service/book
+      - PRODUCT_SERVICE_MOBILE_URL=http://product-service-container:8000/api/product_service/mobile
+      - PRODUCT_SERVICE_CLOTHES_URL=http://product-service-container:8000/api/product_service/clothes
     volumes:
       - search_data:/app/data
     ports:
@@ -113,10 +136,15 @@ services:
 
   # Shipment Service - PostgreSQL
   shipment_service:
-    image: nguyenduc1603/shipment_service:v1.0.2
+    build: ./shipment_service
+    container_name: shipment-service-container
     depends_on:
       postgres:
         condition: service_healthy
+      user_service:
+        condition: service_started
+      order_service:
+        condition: service_started
     environment:
       - DJANGO_DOCKER_ENV=1
       - DATABASE_HOST=postgres
@@ -128,7 +156,8 @@ services:
 
   # User Service - MySQL
   user_service:
-    image: nguyenduc1603/user_service:v1.0.2
+    build: ./user_service
+    container_name: user-service-container
     depends_on:
       mysql:
         condition: service_healthy
@@ -145,6 +174,7 @@ services:
   # API Gateway
   nginx:
     image: nginx:latest
+    container_name: api-gateway-container
     ports:
       - "80:80"
     depends_on:

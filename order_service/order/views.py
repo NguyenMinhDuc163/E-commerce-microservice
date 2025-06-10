@@ -14,27 +14,48 @@ from drf_spectacular.types import OpenApiTypes
 
 # Hàm gọi API verify_token để lấy user_id
 def verify_token(token):
-    url = 'http://127.0.0.1:8002/api/user_service/verify_token/'
-    headers = {'Authorization': f'Bearer {token}'}
-    print(token)
-    response = requests.post(url, headers=headers)
-    print(response)
-    if response.status_code == 200:
-        return response.json().get('user_id')
-    return None
+    try:
+        url = 'http://user-service-container:8000/api/user_service/verify_token/'
+        headers = {'Authorization': f'Bearer {token}'}
+        print(f"Calling user service with token: {token[:20]}...")
+        response = requests.post(url, headers=headers, timeout=10)
+        print(f"User service response status: {response.status_code}")
+        print(f"User service response: {response.text[:200]}...")
+        
+        if response.status_code == 200:
+            try:
+                return response.json().get('user_id')
+            except ValueError as e:
+                print(f"JSON decode error from user service: {e}")
+                return None
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Request to user service failed: {e}")
+        return None
 
 # Hàm gọi API product_service để lấy thông tin sản phẩm
 def get_product(product_id, type):
-    if type == "book":
-        url = f'http://localhost:8001/api/product_service/book/get_book/{product_id}/'
-        response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    return None
+    try:
+        if type == "book":
+            url = f'http://product-service-container:8000/api/product_service/book/get_book/{product_id}/'
+            response = requests.get(url, timeout=10)
+            print(f"Product service response status: {response.status_code}")
+            print(f"Product service response: {response.text[:200]}...")
+            
+            if response.status_code == 200:
+                try:
+                    return response.json()
+                except ValueError as e:
+                    print(f"JSON decode error from product service: {e}")
+                    return None
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Request to product service failed: {e}")
+        return None
 
 # Hàm gọi API shipment_service để tạo shipment mới
 def create_shipment(user_id, order_item_id, username, address, phone, shipment_type):
-    url = 'http://127.0.0.1:8006/api/shipment_service/create/'
+    url = 'http://shipment-service-container:8000/api/shipment_service/create/'
     data = {
         'user_id': user_id,
         'order_item_id': order_item_id,
@@ -51,7 +72,7 @@ def create_shipment(user_id, order_item_id, username, address, phone, shipment_t
 
 # Hàm gọi API payment_service để tạo payment mới
 def create_payment(order_item_id, user_id, payment_type):
-    url = 'http://127.0.0.1:8007/api/payment_service/create/'
+    url = 'http://payment-service-container:8000/api/payment_service/create/'
     data = {
         'order_item_id': order_item_id,
         'user_id': user_id,
@@ -172,7 +193,8 @@ class OrderListByStatus(APIView):
     )
     def get(self, request):
         status_param = request.query_params.get('status')
-        order_items = OrderItem.objects.filter(status=status_param)
+        # Tạm thời trả về tất cả orders vì model chưa có field status
+        order_items = OrderItem.objects.all()
         serializer = OrderItemSerializer(order_items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

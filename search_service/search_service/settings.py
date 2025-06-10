@@ -14,14 +14,15 @@ SECRET_KEY = 'django-insecure-c#j=*7h!=0y06i6vk#1j=nov9ysqo)b_e$nsv4$j@_y%p^8bs@
 
 load_dotenv(os.path.join(BASE_DIR, 'env/.env'))
 
-PRODUCT_SERVICE_BOOK_URL = os.getenv("PRODUCT_SERVICE_BOOK_URL")
-PRODUCT_SERVICE_MOBILE_URL = os.getenv("PRODUCT_SERVICE_MOBILE_URL")
-PRODUCT_SERVICE_CLOTHES_URL = os.getenv("PRODUCT_SERVICE_CLOTHES_URL")
+# Docker URLs for inter-service communication
+PRODUCT_SERVICE_BOOK_URL = os.getenv("PRODUCT_SERVICE_BOOK_URL", "http://product-service-container:8000/api/product_service/book")
+PRODUCT_SERVICE_MOBILE_URL = os.getenv("PRODUCT_SERVICE_MOBILE_URL", "http://product-service-container:8000/api/product_service/mobile")
+PRODUCT_SERVICE_CLOTHES_URL = os.getenv("PRODUCT_SERVICE_CLOTHES_URL", "http://product-service-container:8000/api/product_service/clothes")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 PORT=8003
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 SPECTACULAR_SETTINGS = {

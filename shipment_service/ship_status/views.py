@@ -12,19 +12,48 @@ from drf_spectacular.types import OpenApiTypes
 
 
 def verify_token(token):
-    url = 'http://127.0.0.1:8002/api/user_service/verify_token/'
-    headers = {'Authorization': f'Bearer {token}'}
-    response = requests.post(url, headers=headers)
-    print(response)
-    if response.status_code == 200:
-        return response.json().get('user_id')
-    return None
+    try:
+        url = 'http://user-service-container:8000/api/user_service/verify_token/'
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.post(url, headers=headers, timeout=10)
+        print(f"User service response status: {response.status_code}")
+        print(f"User service response text: {response.text[:200]}...")  # First 200 chars
+        
+        if response.status_code == 200:
+            try:
+                return response.json().get('user_id')
+            except ValueError as e:
+                print(f"JSON decode error from user service: {e}")
+                print(f"Response content: {response.text}")
+                return None
+        else:
+            print(f"User service returned status {response.status_code}: {response.text}")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Request to user service failed: {e}")
+        return None
 
 
 def check_order_item(order_item_id):
-    url = f'http://127.0.0.1:8005/api/order_service/detail/{order_item_id}/'
-    response = requests.get(url)
-    return response.json()
+    try:
+        url = f'http://order-service-container:8000/api/order_service/detail/{order_item_id}/'
+        response = requests.get(url, timeout=10)
+        print(f"Order service response status: {response.status_code}")
+        print(f"Order service response text: {response.text[:200]}...")  # First 200 chars
+        
+        if response.status_code == 200:
+            try:
+                return response.json()
+            except ValueError as e:
+                print(f"JSON decode error from order service: {e}")
+                print(f"Response content: {response.text}")
+                return None
+        else:
+            print(f"Order service returned status {response.status_code}: {response.text}")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Request to order service failed: {e}")
+        return None
 
 class ShipmentCreateView(APIView):
     @extend_schema(
@@ -84,15 +113,24 @@ class ShipmentCreateView(APIView):
                                 status=status.HTTP_401_UNAUTHORIZED)
 
             # Lấy thông tin chi tiết của user dùng token
-            user_info_url = 'http://localhost:8002/api/user_service/user_info/'
+            user_info_url = 'http://user-service-container:8000/api/user_service/user_info/'
             user_info_headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
-            user_info_response = requests.get(user_info_url, headers=user_info_headers)
+            user_info_response = requests.get(user_info_url, headers=user_info_headers, timeout=10)
+
+            print(f"User info response status: {user_info_response.status_code}")
+            print(f"User info response text: {user_info_response.text[:200]}...")
 
             if user_info_response.status_code != 200:
-                return Response({'status': 'Failed', 'status_code': 400, 'message': 'Cannot get user information'},
+                return Response({'status': 'Failed', 'status_code': 400, 
+                               'message': f'Cannot get user information. Status: {user_info_response.status_code}, Response: {user_info_response.text[:100]}'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-            user_info = user_info_response.json()
+            try:
+                user_info = user_info_response.json()
+            except ValueError as e:
+                return Response({'status': 'Failed', 'status_code': 400, 
+                               'message': f'Invalid JSON response from user service: {e}. Response: {user_info_response.text[:100]}'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
             # Xử lý dữ liệu từ request
             if request.content_type == 'application/json':

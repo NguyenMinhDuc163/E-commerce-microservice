@@ -4,6 +4,9 @@ import requests
 from search_service.settings import PRODUCT_SERVICE_BOOK_URL, PRODUCT_SERVICE_CLOTHES_URL, PRODUCT_SERVICE_MOBILE_URL
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Định nghĩa schema cho response
 BOOK_RESPONSE_SCHEMA = {
@@ -78,16 +81,41 @@ CLOTHES_RESPONSE_SCHEMA = {
 @api_view(['GET'])
 def search_all(request):
     key = request.query_params.get('key', '')
-    book_response = requests.get(PRODUCT_SERVICE_BOOK_URL + f'/search_books?key={key}')
-    clothes_response = requests.get(PRODUCT_SERVICE_CLOTHES_URL + f'/search_clothes?key={key}')
-    mobile_response = requests.get(PRODUCT_SERVICE_MOBILE_URL + f'/search_mobiles?key={key}')
     result = []
-    if book_response.status_code == 200:
-        result += book_response.json()
-    if clothes_response.status_code == 200:
-        result += clothes_response.json()
-    if mobile_response.status_code == 200:
-        result += mobile_response.json()
+    
+    # Search books with error handling
+    try:
+        book_response = requests.get(
+            PRODUCT_SERVICE_BOOK_URL + f'/search_books?key={key}',
+            timeout=10
+        )
+        if book_response.status_code == 200:
+            result += book_response.json()
+    except Exception as e:
+        logger.error(f"Error calling book service: {e}")
+    
+    # Search clothes with error handling
+    try:
+        clothes_response = requests.get(
+            PRODUCT_SERVICE_CLOTHES_URL + f'/search_clothes?key={key}',
+            timeout=10
+        )
+        if clothes_response.status_code == 200:
+            result += clothes_response.json()
+    except Exception as e:
+        logger.error(f"Error calling clothes service: {e}")
+    
+    # Search mobiles with error handling
+    try:
+        mobile_response = requests.get(
+            PRODUCT_SERVICE_MOBILE_URL + f'/search_mobiles?key={key}',
+            timeout=10
+        )
+        if mobile_response.status_code == 200:
+            result += mobile_response.json()
+    except Exception as e:
+        logger.error(f"Error calling mobile service: {e}")
+    
     return Response(result)
 
 
@@ -106,8 +134,22 @@ def search_all(request):
 @api_view(['GET'])
 def search_books(request):
     key = request.query_params.get('key', '')
-    response = requests.get(PRODUCT_SERVICE_BOOK_URL + f'/search_books?key={key}')
-    return Response(response.json())
+    try:
+        response = requests.get(
+            PRODUCT_SERVICE_BOOK_URL + f'/search_books?key={key}',
+            timeout=10
+        )
+        if response.status_code == 200:
+            return Response(response.json())
+        else:
+            return Response({'error': f'Product service returned status {response.status_code}'}, status=500)
+    except requests.exceptions.Timeout:
+        return Response({'error': 'Request timeout when calling product service'}, status=504)
+    except requests.exceptions.ConnectionError:
+        return Response({'error': 'Connection error when calling product service'}, status=503)
+    except Exception as e:
+        logger.error(f"Error calling book service: {e}")
+        return Response({'error': 'Internal server error'}, status=500)
 
 
 @extend_schema(
@@ -125,8 +167,22 @@ def search_books(request):
 @api_view(['GET'])
 def search_clothes(request):
     key = request.query_params.get('key', '')
-    response = requests.get(PRODUCT_SERVICE_CLOTHES_URL + f'/search_clothes?key={key}')
-    return Response(response.json())
+    try:
+        response = requests.get(
+            PRODUCT_SERVICE_CLOTHES_URL + f'/search_clothes?key={key}',
+            timeout=10
+        )
+        if response.status_code == 200:
+            return Response(response.json())
+        else:
+            return Response({'error': f'Product service returned status {response.status_code}'}, status=500)
+    except requests.exceptions.Timeout:
+        return Response({'error': 'Request timeout when calling product service'}, status=504)
+    except requests.exceptions.ConnectionError:
+        return Response({'error': 'Connection error when calling product service'}, status=503)
+    except Exception as e:
+        logger.error(f"Error calling clothes service: {e}")
+        return Response({'error': 'Internal server error'}, status=500)
 
 
 @extend_schema(
@@ -144,5 +200,19 @@ def search_clothes(request):
 @api_view(['GET'])
 def search_mobiles(request):
     key = request.query_params.get('key', '')
-    response = requests.get(PRODUCT_SERVICE_MOBILE_URL + f'/search_mobiles?key={key}')
-    return Response(response.json())
+    try:
+        response = requests.get(
+            PRODUCT_SERVICE_MOBILE_URL + f'/search_mobiles?key={key}',
+            timeout=10
+        )
+        if response.status_code == 200:
+            return Response(response.json())
+        else:
+            return Response({'error': f'Product service returned status {response.status_code}'}, status=500)
+    except requests.exceptions.Timeout:
+        return Response({'error': 'Request timeout when calling product service'}, status=504)
+    except requests.exceptions.ConnectionError:
+        return Response({'error': 'Connection error when calling product service'}, status=503)
+    except Exception as e:
+        logger.error(f"Error calling mobile service: {e}")
+        return Response({'error': 'Internal server error'}, status=500)

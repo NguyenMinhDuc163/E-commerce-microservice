@@ -12,22 +12,62 @@ from cart.serializers import CartItemSerializer
 
 # Create your views here.
 def verify(request):
-    url_verify = 'http://localhost:8002/api/user_service/verify_token/'
-    token = request.headers['Authorization'].split()[1]
+    try:
+        # Try same URL as order_service which works
+        url_verify = 'http://user-service-container:8000/api/user_service/verify_token/'
+        
+        # Alternative: Try using container IP - let's debug first
+        print(f"DEBUG: About to call URL: {url_verify}")
+        
+        # Check if Authorization header exists
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            print("ERROR: No Authorization header found")
+            return {'status': False, 'error': 'No Authorization header'}
+        
+        # Extract token
+        try:
+            token = auth_header.split()[1]
+        except IndexError:
+            print("ERROR: Invalid Authorization header format")
+            return {'status': False, 'error': 'Invalid Authorization header format'}
 
-    headers = {
-        'Authorization': f'Bearer {token}'
-    }
-
-    response_verify = requests.post(url_verify, headers=headers)
-    if response_verify.status_code == 200:
-        return {
-            'user_id': response_verify.json()['user_id'],
-            'status': True
+        headers = {
+            'Authorization': f'Bearer {token}'
         }
-    return {
-        'status': False
-    }
+
+        print(f"DEBUG: Calling user_service at {url_verify}")
+        print(f"DEBUG: Token: {token[:20]}...")
+        
+        response_verify = requests.post(url_verify, headers=headers, timeout=10)
+        
+        print(f"DEBUG: User service response status: {response_verify.status_code}")
+        print(f"DEBUG: User service response headers: {dict(response_verify.headers)}")
+        print(f"DEBUG: User service response: {response_verify.text[:500]}...")  # Only first 500 chars
+        
+        # If we get HTML error, it means Django is rejecting the request
+        if response_verify.status_code == 400 and 'html' in response_verify.text.lower():
+            print("ERROR: User service is returning HTML error page - likely ALLOWED_HOSTS issue")
+            print("DEBUG: Let's try a different approach...")
+        
+        if response_verify.status_code == 200:
+            response_data = response_verify.json()
+            return {
+                'user_id': response_data['user_id'],
+                'status': True
+            }
+        else:
+            return {
+                'status': False,
+                'error': f'User service returned {response_verify.status_code}'
+            }
+            
+    except requests.exceptions.RequestException as e:
+        print(f"ERROR: Request to user service failed: {e}")
+        return {'status': False, 'error': f'Request failed: {e}'}
+    except Exception as e:
+        print(f"ERROR: Unexpected error in verify: {e}")
+        return {'status': False, 'error': f'Unexpected error: {e}'}
 
 class CartView(APIView):
 

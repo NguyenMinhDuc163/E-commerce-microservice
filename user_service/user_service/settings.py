@@ -17,8 +17,17 @@ DEBUG = True
 
 PORT = 8002
 CORS_ALLOW_ALL_ORIGINS = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', "http://localhost:8001", "http://localhost:8003"]
+ALLOWED_HOSTS = ['*']
 CORS_ALLOW_CREDENTIALS = True
+
+# Disable ALLOWED_HOSTS validation completely for Docker
+USE_L10N = True
+ALLOWED_HOSTS = ['*']  # Allow all hosts
+
+# Additional debug settings
+import socket
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 
 # Application definition
@@ -40,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,7 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'user_service.urls'

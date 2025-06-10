@@ -19,10 +19,28 @@ def get_books(request):
     serializer = BookSerializer(books, many=True)
     data = serializer.data
     for book in data:
-        book['author'] = Author.objects.get(pk=ObjectId(book['author'])).name
-        book['publisher'] = Publisher.objects.get(pk=ObjectId(book['publisher'])).name
-        book['categories'] = Category.objects.get(pk=ObjectId(book['categories'])).name
-    return Response(serializer.data)
+        # Handle both string names and ObjectId references
+        try:
+            # If author is ObjectId, get the name
+            book['author'] = Author.objects.get(pk=ObjectId(book['author'])).name
+        except:
+            # If author is already a string name, keep it as is
+            pass
+            
+        try:
+            # If publisher is ObjectId, get the name
+            book['publisher'] = Publisher.objects.get(pk=ObjectId(book['publisher'])).name
+        except:
+            # If publisher is already a string name, keep it as is
+            pass
+            
+        try:
+            # If categories is ObjectId, get the name
+            book['categories'] = Category.objects.get(pk=ObjectId(book['categories'])).name
+        except:
+            # If categories is already a string name, keep it as is
+            pass
+    return Response(data)
 
 
 @extend_schema(
@@ -46,9 +64,23 @@ def get_book(request, pk):
         book = Book.objects.get(pk=ObjectId(pk))
         serializer = BookSerializer(book)
         data = serializer.data
-        data['author'] = Author.objects.get(pk=ObjectId(book.author)).name
-        data['publisher'] = Publisher.objects.get(pk=ObjectId(book.publisher)).name
-        data['categories'] = Category.objects.get(pk=ObjectId(book.categories)).name
+        
+        # Handle both string names and ObjectId references
+        try:
+            data['author'] = Author.objects.get(pk=ObjectId(book.author)).name
+        except:
+            data['author'] = book.author  # Already a string name
+            
+        try:
+            data['publisher'] = Publisher.objects.get(pk=ObjectId(book.publisher)).name
+        except:
+            data['publisher'] = book.publisher  # Already a string name
+            
+        try:
+            data['categories'] = Category.objects.get(pk=ObjectId(book.categories)).name
+        except:
+            data['categories'] = book.categories  # Already a string name
+            
         return Response(data)
     except Book.DoesNotExist:
         return Response({'error': 'Book not found'}, status=404)
@@ -88,7 +120,19 @@ def search_books(request):
     serializer = BookSerializer(books, many=True)
     data = serializer.data
     for book in data:
-        book['author'] = Author.objects.get(pk=ObjectId(book['author'])).name
-        book['publisher'] = Publisher.objects.get(pk=ObjectId(book['publisher'])).name
-        book['categories'] = Category.objects.get(pk=ObjectId(book['categories'])).name
+        # Handle both string names and ObjectId references
+        try:
+            book['author'] = Author.objects.get(pk=ObjectId(book['author'])).name
+        except:
+            pass  # Already a string name
+            
+        try:
+            book['publisher'] = Publisher.objects.get(pk=ObjectId(book['publisher'])).name
+        except:
+            pass  # Already a string name
+            
+        try:
+            book['categories'] = Category.objects.get(pk=ObjectId(book['categories'])).name
+        except:
+            pass  # Already a string name
     return Response(data)

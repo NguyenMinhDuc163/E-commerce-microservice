@@ -11,26 +11,62 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 from drf_spectacular.types import OpenApiTypes
 
 def verify_token(token):
-    url = 'http://127.0.0.1:8002/api/user_service/verify_token/'
-    headers = {'Authorization': f'Bearer {token}'}
-    print(token)
-    response = requests.post(url, headers=headers)
-    print(response)
-    if response.status_code == 200:
-        return response.json().get('user_id')
-    return None
+    try:
+        url = 'http://user-service-container:8000/api/user_service/verify_token/'
+        headers = {'Authorization': f'Bearer {token}'}
+        print(f"Calling user service with token: {token[:20]}...")
+        response = requests.post(url, headers=headers, timeout=10)
+        print(f"User service response status: {response.status_code}")
+        print(f"User service response: {response.text[:200]}...")
+        
+        if response.status_code == 200:
+            try:
+                return response.json().get('user_id')
+            except ValueError as e:
+                print(f"JSON decode error from user service: {e}")
+                return None
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Request to user service failed: {e}")
+        return None
 
 #Hàm kiểm tra order_item_id
 def check_order_item(order_item_id):
-    url = f'http://127.0.0.1:8005/api/order_service/detail/{order_item_id}/'
-    response = requests.get(url)
-    return response.json()
+    try:
+        url = f'http://order-service-container:8000/api/order_service/detail/{order_item_id}/'
+        response = requests.get(url, timeout=10)
+        print(f"Order service response status: {response.status_code}")
+        print(f"Order service response: {response.text[:200]}...")
+        
+        if response.status_code == 200:
+            try:
+                return response.json()
+            except ValueError as e:
+                print(f"JSON decode error from order service: {e}")
+                return None
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Request to order service failed: {e}")
+        return None
 
 
 def check_shipment(shipment_id):
-    url = f'http://127.0.0.1:8006/api/shipment_service/detail/{shipment_id}/'
-    response = requests.get(url)
-    return response.json()
+    try:
+        url = f'http://shipment-service-container:8000/api/shipment_service/detail/{shipment_id}/'
+        response = requests.get(url, timeout=10)
+        print(f"Shipment service response status: {response.status_code}")
+        print(f"Shipment service response: {response.text[:200]}...")
+        
+        if response.status_code == 200:
+            try:
+                return response.json()
+            except ValueError as e:
+                print(f"JSON decode error from shipment service: {e}")
+                return None
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Request to shipment service failed: {e}")
+        return None
 
 class CreatePaymentView(APIView):
     @extend_schema(
