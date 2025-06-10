@@ -45,18 +45,16 @@
 
 ## 🚀 Hướng Dẫn Cài Đặt
 
-### Yêu Cầu Hệ Thống
-- **Java**: 11 hoặc cao hơn
-- **Maven**: 3.6+
-- **Database**: MySQL/PostgreSQL
-- **IDE**: IntelliJ IDEA hoặc Eclipse
+
 
 ### Cài Đặt và Chạy
 
 1. **Clone repository**
    ```bash
    git clone [repository-url]
-   cd Software_Architecture_and_Design_PTIT
+   cd E-commerce-microservice
+
+
    ```
 
 2. **Cài đặt dependencies**
